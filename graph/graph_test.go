@@ -1,6 +1,8 @@
 package graph
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	// when
@@ -19,9 +21,7 @@ func TestAddEdge(t *testing.T) {
 
 	g := NewGraph()
 	g.AddEdge(1, 2)
-	t.Logf("Graph after first edge: %+v", g)
 	g.AddEdge(1, 3)
-	t.Logf("Graph after second edge: %+v", g)
 
 	neighbours, err := g.Neighbours(1)
 	t.Logf("neightbours of 1: %v", neighbours)
@@ -58,4 +58,38 @@ func TestNeighbours_Success(t *testing.T) {
 		t.Errorf("expected neighbours len 2 but got %d", len(neighbours))
 	}
 
+}
+
+func TestBFS(t *testing.T) {
+	g := NewGraph()
+	g.AddEdge(1, 2)
+	g.AddEdge(1, 3)
+	g.AddEdge(1, 4)
+	g.AddEdge(2, 22)
+	g.AddEdge(22, 222)
+
+	visited, err := g.BFS(1)
+
+	if err != nil {
+		t.Fatalf("error BFS: %v", err)
+	}
+
+	if len(visited) != 6 {
+		t.Errorf("Expected all nodes visited but got %d", len(visited))
+	}
+
+	if !checkVisited(visited, 1, 2, 3, 4, 22, 222) {
+		t.Errorf("Wrong visited: %v", visited)
+	}
+}
+
+func checkVisited(visited []int, items ...int) bool {
+
+	for index, item := range items {
+		if visited[index] != item {
+			return false
+		}
+	}
+
+	return true
 }
